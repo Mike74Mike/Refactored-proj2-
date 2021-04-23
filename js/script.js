@@ -18,8 +18,7 @@ header.innerHTML +=`<div class="student-search">
                     <button class="select-button"><img src="img/icn-search.svg" alt="Search icon"></button>
                   </div>
                     `
-const input = document.querySelector('input');
-const button = document.querySelector('button')
+const input = document.querySelector('#search');
 
 /**
 * @function showPage
@@ -34,7 +33,9 @@ function showPage(list, page){
   const endIndex = page * 9;
 
   studentList.innerHTML ='';
-
+  if(list.length === 0){
+    studentList.innerHTML =`<h1>This person could not be found, please try again</h1>`
+  }
   for(let i= 0; i<list.length; i++){
       if(i >= startIndex && endIndex > i){
 
@@ -51,6 +52,7 @@ function showPage(list, page){
                                         </li>
                                        `
         )
+
       }
   }
 }
@@ -62,19 +64,20 @@ showPage(data, 1)
 *               I will eventually get back to it
 */
 
-function searchBar(searchInput, list){
-  for(let i=0; i<list.length; i++){
-    const newList=[]
-     if(searchInput.value.length !== 0 &&
-       list[i].textContent.toLowerCase().includes(searchInput.value.toLowerCase())){
-        newList.push[input.value]
-      } else{
-        showPage(data, 1)
-        addPagination(data)
-      }
-  }
+function searchBar(sInput, list){
+    let newList =[];
+    for(let i=0; i<list.length; i++){
+    const firstLast= `${list[i].name.first.toLowerCase()} ${list[i].name.first.toLowerCase()}`
+     if(firstLast.includes(sInput.toLowerCase()) ){
+         newList.push(list[i]);
+    }
 
-}
+  }
+  console.log(newList)
+  showPage(newList, 1);
+  addPagination(newList)
+};
+
 
 /**
 * @function addPagination
@@ -88,13 +91,13 @@ function addPagination(list){
   const linkList = document.querySelector('.link-list');
   linkList.innerHTML ='';
 
-  for(let i = 1; i<(list.length/9)+1; i++){
+  for(let i = 1; i<Math.ceil(list.length/9)+1; i++){
     linkList.insertAdjacentHTML('beforeend', `<li>
                                                 <button type="button">${i}</button>
                                               </li>`
     )
+     document.querySelector('.link-list button').className = 'active';
   }
-  linkList.firstElementChild.firstElementChild.classList.add('active')
   linkList.addEventListener('click', e => {
     if(e.target.tagName ==='BUTTON'){
       const active = document.querySelector('.active');
@@ -107,13 +110,14 @@ function addPagination(list){
 
 addPagination(data)
 // Call functions
+const button = document.querySelector('.select-button')
 
-button.addEventListener('click', e=>{
+button.addEventListener('click', (e)=>{
   e.preventDefault();
 
-  searchBar(input, data)
+  searchBar(input.value, data)
 });
 
-input.addEventListener('keyup', ()=>{
-  searchBar(input, data);
+input.addEventListener('keyup', (e)=>{
+  searchBar(e.target.value, data);
 })
